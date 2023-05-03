@@ -34,11 +34,11 @@ interface VowLike {
 }
 
 /*
-   This thing creates gems on demand in return for dai.
+   This thing creates gems on demand in return for stbl.
 
  - `lot` gems in return for bid
- - `bid` dai paid
- - `gal` receives dai income
+ - `bid` stbl paid
+ - `gal` receives stbl income
  - `ttl` single bid lifetime
  - `beg` minimum bid increase
  - `end` max auction duration
@@ -56,7 +56,7 @@ contract Flopper is LibNote {
 
     // --- Data ---
     struct Bid {
-        uint256 bid;  // dai paid                [rad]
+        uint256 bid;  // stbl paid                [rad]
         uint256 lot;  // gems in return for bid  [wad]
         address guy;  // high bidder
         uint48  tic;  // bid expiry time         [unix epoch time]

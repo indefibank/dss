@@ -31,13 +31,13 @@ interface CatLike {
 }
 
 /*
-   This thing lets you flip some gems for a given amount of dai.
-   Once the given amount of dai is raised, gems are forgone instead.
+   This thing lets you flip some gems for a given amount of stbl.
+   Once the given amount of stbl is raised, gems are forgone instead.
 
  - `lot` gems in return for bid
- - `tab` total dai wanted
- - `bid` dai paid
- - `gal` receives dai income
+ - `tab` total stbl wanted
+ - `bid` stbl paid
+ - `gal` receives stbl income
  - `usr` receives gem forgone
  - `ttl` single bid lifetime
  - `beg` minimum bid increase
@@ -56,14 +56,14 @@ contract Flipper is LibNote {
 
     // --- Data ---
     struct Bid {
-        uint256 bid;  // dai paid                 [rad]
+        uint256 bid;  // stbl paid                 [rad]
         uint256 lot;  // gems in return for bid   [wad]
         address guy;  // high bidder
         uint48  tic;  // bid expiry time          [unix epoch time]
         uint48  end;  // auction expiry time      [unix epoch time]
         address usr;
         address gal;
-        uint256 tab;  // total dai wanted         [rad]
+        uint256 tab;  // total stbl wanted         [rad]
     }
 
     mapping (uint256 => Bid) public bids;
