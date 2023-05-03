@@ -104,12 +104,18 @@ contract StableCoinTest is DSTest {
     uint deadline = 0;
     address cal = 0xf055561573121ACBb6B0F78D69A1766Cd996AA56;
     address del = 0xdd2d5D3f7f1b35b7A0601D6A00DbB7D44Af58479;
+
     bytes32 r = 0xce91806c03aa47358277c5d1d074f5edd1ca38e1559b66bafb1a02d7c667810a;
     bytes32 s = 0x0d62ea0cde1c891742ade73cd1412fe1a46c23ba28fd788712a864a7ae953a92;
     uint8 v = 27;
+
     bytes32 _r = 0x39e8b7b648bc42ade928ac85d65650d697bfaa05097a25f5477cc0bba997bbd1;
     bytes32 _s = 0x3d587b25a7104b7e3f2640e871cba282f4cec27a4e1a6dccbab6ec3b2e858568;
     uint8 _v = 27;
+
+    bytes32 r_ = 0x325afc41e4e894ab4ea01a7be20636e0e20a4dedbfc302e2e09851904f7f536b;
+    bytes32 s_ = 0x6c00ac16954ada213dbc2c4cda5f4000adea1577aa3c3633ba495700ed7e4b9f;
+    uint8 v_ = 27;
 
 
     function setUp() public {
@@ -282,6 +288,14 @@ contract StableCoinTest is DSTest {
         assertEq(address(token), address(0x11Ee1eeF5D446D07Cf26941C7F2B4B1Dfb9D030B));
     }
 
+    function testRenameToken() public {
+        token.setSymbol("tst");
+        token.setName("TestCoin");
+
+        assertEq(token.symbol(), "tst");
+        assertEq(token.name(), "TestCoin");
+    }
+
     function testTypehash() public {
         assertEq(token.PERMIT_TYPEHASH(), 0xea2aa0a1be11a07ed86d755c93467f4f82362b452371d1ba94d1715123511acb);
     }
@@ -294,6 +308,18 @@ contract StableCoinTest is DSTest {
         assertEq(token.nonces(cal), 0);
         assertEq(token.allowance(cal, del), 0);
         token.permit(cal, del, 0, 0, true, v, r, s);
+        assertEq(token.allowance(cal, del),uint(-1));
+        assertEq(token.nonces(cal),1);
+    }
+
+    function testPermitAfterRenameToken() public {
+        assertEq(token.nonces(cal), 0);
+        assertEq(token.allowance(cal, del), 0);
+
+        token.setSymbol("tst");
+        token.setName("TestCoin");
+
+        token.permit(cal, del, 0, 0, true, v_, r_, s_);
         assertEq(token.allowance(cal, del),uint(-1));
         assertEq(token.nonces(cal),1);
     }
