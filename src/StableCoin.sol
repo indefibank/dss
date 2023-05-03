@@ -19,7 +19,7 @@ pragma solidity >=0.5.12;
 
 import "./lib.sol";
 
-contract StableCoin {
+contract StableCoin is LibNote{
     // --- Auth ---
     mapping (address => uint) public wards;
     function rely(address guy) external note auth { wards[guy] = 1; }

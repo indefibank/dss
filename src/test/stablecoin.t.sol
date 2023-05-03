@@ -102,13 +102,13 @@ contract StableCoinTest is DSTest {
     uint fee = 1;
     uint nonce = 0;
     uint deadline = 0;
-    address cal = 0x29C76e6aD8f28BB1004902578Fb108c507Be341b;
+    address cal = 0xf055561573121ACBb6B0F78D69A1766Cd996AA56;
     address del = 0xdd2d5D3f7f1b35b7A0601D6A00DbB7D44Af58479;
-    bytes32 r = 0x8e30095d9e5439a4f4b8e4b5c94e7639756474d72aded20611464c8f002efb06;
-    bytes32 s = 0x49a0ed09658bc768d6548689bcbaa430cefa57846ef83cb685673a9b9a575ff4;
+    bytes32 r = 0xce91806c03aa47358277c5d1d074f5edd1ca38e1559b66bafb1a02d7c667810a;
+    bytes32 s = 0x0d62ea0cde1c891742ade73cd1412fe1a46c23ba28fd788712a864a7ae953a92;
     uint8 v = 27;
-    bytes32 _r = 0x85da10f8af2cf512620c07d800f8e17a2a4cd2e91bf0835a34bf470abc6b66e5;
-    bytes32 _s = 0x7e8e641e5e8bef932c3a55e7365e0201196fc6385d942c47d749bf76e73ee46f;
+    bytes32 _r = 0x39e8b7b648bc42ade928ac85d65650d697bfaa05097a25f5477cc0bba997bbd1;
+    bytes32 _s = 0x3d587b25a7104b7e3f2640e871cba282f4cec27a4e1a6dccbab6ec3b2e858568;
     uint8 _v = 27;
 
 
@@ -287,7 +287,7 @@ contract StableCoinTest is DSTest {
     }
 
     function testDomain_Separator() public {
-        assertEq(token.DOMAIN_SEPARATOR(), 0x68a9504c1a7fba795f7730732abab11cb5fa5113edd2396392abd5c1bbda4043);
+        assertEq(token.DOMAIN_SEPARATOR(), 0xbd4ece82614f4d80e75c217327b20269bb88dee38dd5b02cd4cc75074a07017e);
     }
 
     function testPermit() public {
