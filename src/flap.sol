@@ -33,9 +33,9 @@ interface GemLike {
 }
 
 /*
-   This thing lets you sell some dai in return for gems.
+   This thing lets you sell some stbl in return for gems.
 
- - `lot` dai in return for bid
+ - `lot` stbl in return for bid
  - `bid` gems paid
  - `ttl` single bid lifetime
  - `beg` minimum bid increase
@@ -55,7 +55,7 @@ contract Flapper {
     // --- Data ---
     struct Bid {
         uint256 bid;  // gems paid               [wad]
-        uint256 lot;  // dai in return for bid   [rad]
+        uint256 lot;  // stbl in return for bid   [rad]
         address guy;  // high bidder
         uint48  tic;  // bid expiry time         [unix epoch time]
         uint48  end;  // auction expiry time     [unix epoch time]
@@ -72,8 +72,8 @@ contract Flapper {
     uint48   public   tau = 2 days;   // 2 days total auction length  [seconds]
     uint256  public kicks = 0;
     uint256  public live;  // Active Flag
-    uint256  public lid;   // max dai to be in auction at one time  [rad]
-    uint256  public fill;  // current dai in auction                [rad]
+    uint256  public lid;   // max stbl to be in auction at one time  [rad]
+    uint256  public fill;  // current stbl in auction                [rad]
 
     // --- Events ---
     event Kick(

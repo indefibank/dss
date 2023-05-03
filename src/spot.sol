@@ -48,7 +48,7 @@ contract Spotter {
     mapping (bytes32 => Ilk) public ilks;
 
     VatLike public vat;  // CDP Engine
-    uint256 public par;  // ref per dai [ray]
+    uint256 public par;  // ref per stbl [ray]
 
     uint256 public live;
 

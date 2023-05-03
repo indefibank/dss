@@ -47,9 +47,9 @@ interface VatLike {
       - `GemJoin`: For well behaved ERC20 tokens, with simple transfer
                    semantics.
 
-      - `ETHJoin`: For native Ether.
+      - `COINJoin`: For native Coin.
 
-      - `DaiJoin`: For connecting internal Dai balances to an external
+      - `StblJoin`: For connecting internal Stbl balances to an external
                    `DSToken` implementation.
 
     In practice, adapter implementations will be varied and specific to
@@ -120,7 +120,7 @@ contract GemJoin {
     }
 }
 
-contract DaiJoin {
+contract StblJoin {
     // --- Auth ---
     mapping (address => uint) public wards;
     function rely(address usr) external auth {
@@ -132,13 +132,13 @@ contract DaiJoin {
         emit Deny(usr);
     }
     modifier auth {
-        require(wards[msg.sender] == 1, "DaiJoin/not-authorized");
+        require(wards[msg.sender] == 1, "StblJoin/not-authorized");
         _;
     }
 
-    VatLike public vat;      // CDP Engine
-    DSTokenLike public dai;  // Stablecoin Token
-    uint    public live;     // Active Flag
+    VatLike public vat;       // CDP Engine
+    DSTokenLike public stbl;  // Stablecoin Token
+    uint    public live;      // Active Flag
 
     // Events
     event Rely(address indexed usr);
@@ -147,11 +147,11 @@ contract DaiJoin {
     event Exit(address indexed usr, uint256 wad);
     event Cage();
 
-    constructor(address vat_, address dai_) public {
+    constructor(address vat_, address stbl_) public {
         wards[msg.sender] = 1;
         live = 1;
         vat = VatLike(vat_);
-        dai = DSTokenLike(dai_);
+        stbl = DSTokenLike(stbl_);
     }
     function cage() external auth {
         live = 0;
@@ -163,13 +163,13 @@ contract DaiJoin {
     }
     function join(address usr, uint wad) external {
         vat.move(address(this), usr, mul(ONE, wad));
-        dai.burn(msg.sender, wad);
+        stbl.burn(msg.sender, wad);
         emit Join(usr, wad);
     }
     function exit(address usr, uint wad) external {
-        require(live == 1, "DaiJoin/not-live");
+        require(live == 1, "StblJoin/not-live");
         vat.move(msg.sender, address(this), mul(ONE, wad));
-        dai.mint(usr, wad);
+        stbl.mint(usr, wad);
         emit Exit(usr, wad);
     }
 }

@@ -23,19 +23,21 @@ pragma solidity ^0.6.12;
 // It doesn't use LibNote anymore.
 // New deployments of this contract will need to include custom events (TO DO).
 
-contract Dai {
+contract StableCoin {
     // --- Auth ---
     mapping (address => uint) public wards;
     function rely(address guy) external auth { wards[guy] = 1; }
     function deny(address guy) external auth { wards[guy] = 0; }
     modifier auth {
-        require(wards[msg.sender] == 1, "Dai/not-authorized");
+        require(wards[msg.sender] == 1, "StableCoin/not-authorized");
         _;
     }
 
+    uint256 public chainId;
+
     // --- ERC20 Data ---
-    string  public constant name     = "Dai Stablecoin";
-    string  public constant symbol   = "DAI";
+    string  public name     = "Stablecoin";
+    string  public symbol   = "STBL";
     string  public constant version  = "1";
     uint8   public constant decimals = 18;
     uint256 public totalSupply;
@@ -62,11 +64,27 @@ contract Dai {
 
     constructor(uint256 chainId_) public {
         wards[msg.sender] = 1;
+        chainId = chainId_;
         DOMAIN_SEPARATOR = keccak256(abi.encode(
             keccak256("EIP712Domain(string name,string version,uint256 chainId,address verifyingContract)"),
             keccak256(bytes(name)),
             keccak256(bytes(version)),
             chainId_,
+            address(this)
+        ));
+    }
+
+    function setSymbol(string memory symbol_) public auth {
+        symbol = symbol_;
+    }
+
+    function setName(string memory name_) public auth {
+        name = name_;
+        DOMAIN_SEPARATOR = keccak256(abi.encode(
+            keccak256("EIP712Domain(string name,string version,uint256 chainId,address verifyingContract)"),
+            keccak256(bytes(name)),
+            keccak256(bytes(version)),
+            chainId,
             address(this)
         ));
     }
@@ -78,9 +96,9 @@ contract Dai {
     function transferFrom(address src, address dst, uint wad)
         public returns (bool)
     {
-        require(balanceOf[src] >= wad, "Dai/insufficient-balance");
+        require(balanceOf[src] >= wad, "StableCoin/insufficient-balance");
         if (src != msg.sender && allowance[src][msg.sender] != uint(-1)) {
-            require(allowance[src][msg.sender] >= wad, "Dai/insufficient-allowance");
+            require(allowance[src][msg.sender] >= wad, "StableCoin/insufficient-allowance");
             allowance[src][msg.sender] = sub(allowance[src][msg.sender], wad);
         }
         balanceOf[src] = sub(balanceOf[src], wad);
@@ -94,9 +112,9 @@ contract Dai {
         emit Transfer(address(0), usr, wad);
     }
     function burn(address usr, uint wad) external {
-        require(balanceOf[usr] >= wad, "Dai/insufficient-balance");
+        require(balanceOf[usr] >= wad, "StableCoin/insufficient-balance");
         if (usr != msg.sender && allowance[usr][msg.sender] != uint(-1)) {
-            require(allowance[usr][msg.sender] >= wad, "Dai/insufficient-allowance");
+            require(allowance[usr][msg.sender] >= wad, "StableCoin/insufficient-allowance");
             allowance[usr][msg.sender] = sub(allowance[usr][msg.sender], wad);
         }
         balanceOf[usr] = sub(balanceOf[usr], wad);
@@ -136,10 +154,10 @@ contract Dai {
                                      allowed))
         ));
 
-        require(holder != address(0), "Dai/invalid-address-0");
-        require(holder == ecrecover(digest, v, r, s), "Dai/invalid-permit");
-        require(expiry == 0 || now <= expiry, "Dai/permit-expired");
-        require(nonce == nonces[holder]++, "Dai/invalid-nonce");
+        require(holder != address(0), "StableCoin/invalid-address-0");
+        require(holder == ecrecover(digest, v, r, s), "StableCoin/invalid-permit");
+        require(expiry == 0 || now <= expiry, "StableCoin/permit-expired");
+        require(nonce == nonces[holder]++, "StableCoin/invalid-nonce");
         uint wad = allowed ? uint(-1) : 0;
         allowance[holder][spender] = wad;
         emit Approval(holder, spender, wad);

@@ -64,8 +64,8 @@ contract Dog {
     struct Ilk {
         address clip;  // Liquidator
         uint256 chop;  // Liquidation Penalty                                          [wad]
-        uint256 hole;  // Max DAI needed to cover debt+fees of active auctions per ilk [rad]
-        uint256 dirt;  // Amt DAI needed to cover debt+fees of active auctions per ilk [rad]
+        uint256 hole;  // Max STBL needed to cover debt+fees of active auctions per ilk [rad]
+        uint256 dirt;  // Amt STBL needed to cover debt+fees of active auctions per ilk [rad]
     }
 
     VatLike immutable public vat;  // CDP Engine
@@ -74,8 +74,8 @@ contract Dog {
 
     VowLike public vow;   // Debt Engine
     uint256 public live;  // Active Flag
-    uint256 public Hole;  // Max DAI needed to cover debt+fees of active auctions [rad]
-    uint256 public Dirt;  // Amt DAI needed to cover debt+fees of active auctions [rad]
+    uint256 public Hole;  // Max STBL needed to cover debt+fees of active auctions [rad]
+    uint256 public Dirt;  // Amt STBL needed to cover debt+fees of active auctions [rad]
 
     // --- Events ---
     event Rely(address indexed usr);
@@ -155,15 +155,15 @@ contract Dog {
 
     // --- CDP Liquidation: all bark and no bite ---
     //
-    // Liquidate a Vault and start a Dutch auction to sell its collateral for DAI.
+    // Liquidate a Vault and start a Dutch auction to sell its collateral for STBL.
     //
     // The third argument is the address that will receive the liquidation reward, if any.
     //
-    // The entire Vault will be liquidated except when the target amount of DAI to be raised in
+    // The entire Vault will be liquidated except when the target amount of STBL to be raised in
     // the resulting auction (debt of Vault + liquidation penalty) causes either Dirt to exceed
     // Hole or ilk.dirt to exceed ilk.hole by an economically significant amount. In that
     // case, a partial liquidation is performed to respect the global and per-ilk limits on
-    // outstanding DAI target. The one exception is if the resulting auction would likely
+    // outstanding STBL target. The one exception is if the resulting auction would likely
     // have too little collateral to be interesting to Keepers (debt taken from Vault < ilk.dust),
     // in which case the function reverts. Please refer to the code and comments within if
     // more detail is desired.
@@ -197,7 +197,7 @@ contract Dog {
                     // This will result in at least one of dirt_i > hole_i or Dirt > Hole becoming true.
                     // The amount of excess will be bounded above by ceiling(dust_i * chop_i / WAD).
                     // This deviation is assumed to be small compared to both hole_i and Hole, so that
-                    // the extra amount of target DAI over the limits intended is not of economic concern.
+                    // the extra amount of target STBL over the limits intended is not of economic concern.
                     dart = art;
                 } else {
 

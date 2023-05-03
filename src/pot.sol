@@ -24,20 +24,20 @@ pragma solidity ^0.6.12;
 // New deployments of this contract will need to include custom events (TO DO).
 
 /*
-   "Savings Dai" is obtained when Dai is deposited into
-   this contract. Each "Savings Dai" accrues Dai interest
-   at the "Dai Savings Rate".
+   "Savings Stbl" is obtained when Stbl is deposited into
+   this contract. Each "Savings Stbl" accrues Stbl interest
+   at the "Stbl Savings Rate".
 
    This contract does not implement a user tradeable token
    and is intended to be used with adapters.
 
-         --- `save` your `dai` in the `pot` ---
+         --- `save` your `stbl` in the `pot` ---
 
-   - `dsr`: the Dai Savings Rate
-   - `pie`: user balance of Savings Dai
+   - `dsr`: the Stbl Savings Rate
+   - `pie`: user balance of Savings Stbl
 
-   - `join`: start saving some dai
-   - `exit`: remove some dai
+   - `join`: start saving some stbl
+   - `exit`: remove some stbl
    - `drip`: perform rate collection
 
 */
@@ -58,10 +58,10 @@ contract Pot {
     }
 
     // --- Data ---
-    mapping (address => uint256) public pie;  // Normalised Savings Dai [wad]
+    mapping (address => uint256) public pie;  // Normalised Savings Stbl [wad]
 
-    uint256 public Pie;   // Total Normalised Savings Dai  [wad]
-    uint256 public dsr;   // The Dai Savings Rate          [ray]
+    uint256 public Pie;   // Total Normalised Savings Stbl  [wad]
+    uint256 public dsr;   // The Stbl Savings Rate          [ray]
     uint256 public chi;   // The Rate Accumulator          [ray]
 
     VatLike public vat;   // CDP Engine
@@ -150,7 +150,7 @@ contract Pot {
         vat.suck(address(vow), address(this), _mul(Pie, chi_));
     }
 
-    // --- Savings Dai Management ---
+    // --- Savings Stbl Management ---
     function join(uint wad) external {
         require(now == rho, "Pot/rho-not-updated");
         pie[msg.sender] = _add(pie[msg.sender], wad);

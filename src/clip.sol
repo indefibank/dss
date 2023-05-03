@@ -63,7 +63,7 @@ contract Clipper {
     VatLike  immutable public vat;   // Core CDP Engine
 
     DogLike     public dog;      // Liquidation module
-    address     public vow;      // Recipient of dai raised in auctions
+    address     public vow;      // Recipient of stbl raised in auctions
     SpotterLike public spotter;  // Collateral price module
     AbacusLike  public calc;     // Current price calculator
 
@@ -79,7 +79,7 @@ contract Clipper {
 
     struct Sale {
         uint256 pos;  // Index in active array
-        uint256 tab;  // Dai to raise       [rad]
+        uint256 tab;  // Stbl to raise       [rad]
         uint256 lot;  // collateral to sell [wad]
         address usr;  // Liquidated CDP
         uint96  tic;  // Auction start time
@@ -225,7 +225,7 @@ contract Clipper {
     //
     // Where `val` is the collateral's unitary value in USD, `buf` is a
     // multiplicative factor to increase the starting price, and `par` is a
-    // reference per DAI.
+    // reference per STBL.
     function kick(
         uint256 tab,  // Debt                   [rad]
         uint256 lot,  // Collateral             [wad]
@@ -309,13 +309,13 @@ contract Clipper {
 
     // Buy up to `amt` of collateral from the auction indexed by `id`.
     // 
-    // Auctions will not collect more DAI than their assigned DAI target,`tab`;
-    // thus, if `amt` would cost more DAI than `tab` at the current price, the
-    // amount of collateral purchased will instead be just enough to collect `tab` DAI.
+    // Auctions will not collect more STBL than their assigned STBL target,`tab`;
+    // thus, if `amt` would cost more STBL than `tab` at the current price, the
+    // amount of collateral purchased will instead be just enough to collect `tab` STBL.
     //
     // To avoid partial purchases resulting in very small leftover auctions that will
     // never be cleared, any partial purchase must leave at least `Clipper.chost`
-    // remaining DAI target. `chost` is an asynchronously updated value equal to
+    // remaining STBL target. `chost` is an asynchronously updated value equal to
     // (Vat.dust * Dog.chop(ilk) / WAD) where the values are understood to be determined
     // by whatever they were when Clipper.upchost() was last called. Purchase amounts
     // will be minimally decreased when necessary to respect this limit; i.e., if the
@@ -327,7 +327,7 @@ contract Clipper {
     function take(
         uint256 id,           // Auction id
         uint256 amt,          // Upper limit on amount of collateral to buy  [wad]
-        uint256 max,          // Maximum acceptable price (DAI / collateral) [ray]
+        uint256 max,          // Maximum acceptable price (STBL / collateral) [ray]
         address who,          // Receiver of collateral and external call address
         bytes calldata data   // Data to pass in external call; if length 0, no call is done
     ) external lock isStopped(3) {
@@ -357,10 +357,10 @@ contract Clipper {
             // Purchase as much as possible, up to amt
             uint256 slice = min(lot, amt);  // slice <= lot
 
-            // DAI needed to buy a slice of this sale
+            // STBL needed to buy a slice of this sale
             owe = mul(slice, price);
 
-            // Don't collect more than tab of DAI
+            // Don't collect more than tab of STBL
             if (owe > tab) {
                 // Total debt will be paid
                 owe = tab;                  // owe' <= owe
@@ -395,10 +395,10 @@ contract Clipper {
                 ClipperCallee(who).clipperCall(msg.sender, owe, slice, data);
             }
 
-            // Get DAI from caller
+            // Get STBL from caller
             vat.move(msg.sender, vow, owe);
 
-            // Removes Dai out for liquidation from accumulator
+            // Removes Stbl out for liquidation from accumulator
             dog_.digs(ilk, lot == 0 ? tab + owe : owe);
         }
 

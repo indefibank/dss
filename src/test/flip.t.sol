@@ -75,10 +75,10 @@ contract Cat_ is Cat {
 
 contract Vat_ is Vat {
     function mint(address usr, uint wad) public {
-        dai[usr] += wad;
+        stbl[usr] += wad;
     }
-    function dai_balance(address usr) public view returns (uint) {
-        return dai[usr];
+    function stbl_balance(address usr) public view returns (uint) {
+        return stbl[usr];
     }
     bytes32 ilk;
     function set_ilk(bytes32 ilk_) public {
@@ -155,17 +155,17 @@ contract FlipTest is DSTest {
 
         Guy(ali).tend(id, 100 ether, 1 ether);
         // bid taken from bidder
-        assertEq(vat.dai_balance(ali),   199 ether);
+        assertEq(vat.stbl_balance(ali),   199 ether);
         // gal receives payment
-        assertEq(vat.dai_balance(gal),     1 ether);
+        assertEq(vat.stbl_balance(gal),     1 ether);
 
         Guy(bob).tend(id, 100 ether, 2 ether);
         // bid taken from bidder
-        assertEq(vat.dai_balance(bob), 198 ether);
+        assertEq(vat.stbl_balance(bob), 198 ether);
         // prev bidder refunded
-        assertEq(vat.dai_balance(ali), 200 ether);
+        assertEq(vat.stbl_balance(ali), 200 ether);
         // gal receives excess
-        assertEq(vat.dai_balance(gal),   2 ether);
+        assertEq(vat.stbl_balance(gal),   2 ether);
 
         hevm.warp(now + 5 hours);
         Guy(bob).deal(id);
@@ -183,9 +183,9 @@ contract FlipTest is DSTest {
 
         Guy(ali).tend(id, 100 ether, 1 ether);
         // bid taken from bidder
-        assertEq(vat.dai_balance(ali), 199 ether);
+        assertEq(vat.stbl_balance(ali), 199 ether);
         // gal receives payment
-        assertEq(vat.dai_balance(gal),   1 ether);
+        assertEq(vat.stbl_balance(gal),   1 ether);
     }
     function test_dent() public {
         uint id = flip.kick({ lot: 100 ether
@@ -200,8 +200,8 @@ contract FlipTest is DSTest {
         Guy(ali).dent(id,  95 ether, 50 ether);
         // plop the gems
         assertEq(vat.gem_balance(address(0xacab)), 5 ether);
-        assertEq(vat.dai_balance(ali),  150 ether);
-        assertEq(vat.dai_balance(bob),  200 ether);
+        assertEq(vat.stbl_balance(ali),  150 ether);
+        assertEq(vat.stbl_balance(bob),  200 ether);
     }
     function test_tend_dent_same_bidder() public {
        uint id = flip.kick({ lot: 100 ether
@@ -211,11 +211,11 @@ contract FlipTest is DSTest {
                             , bid: 0
                             });
 
-        assertEq(vat.dai_balance(ali), 200 ether);
+        assertEq(vat.stbl_balance(ali), 200 ether);
         Guy(ali).tend(id, 100 ether, 190 ether);
-        assertEq(vat.dai_balance(ali), 10 ether);
+        assertEq(vat.stbl_balance(ali), 10 ether);
         Guy(ali).tend(id, 100 ether, 200 ether);
-        assertEq(vat.dai_balance(ali), 0);
+        assertEq(vat.stbl_balance(ali), 0);
         Guy(ali).dent(id, 80 ether, 200 ether);
     }
     function test_beg() public {
@@ -311,8 +311,8 @@ contract FlipTest is DSTest {
         Guy(ali).tend(id, 100 ether, 1 ether);
 
         // bid taken from bidder
-        assertEq(vat.dai_balance(ali), 199 ether);
-        assertEq(vat.dai_balance(gal),   1 ether);
+        assertEq(vat.stbl_balance(ali), 199 ether);
+        assertEq(vat.stbl_balance(gal),   1 ether);
 
         // we have some amount of litter in the box
         assertEq(cat.litter(), 5 * MLN * RAD);
@@ -321,8 +321,8 @@ contract FlipTest is DSTest {
         flip.yank(id);
 
         // bid is refunded to bidder from caller
-        assertEq(vat.dai_balance(ali),            200 ether);
-        assertEq(vat.dai_balance(address(this)),    0 ether);
+        assertEq(vat.stbl_balance(ali),            200 ether);
+        assertEq(vat.stbl_balance(address(this)),    0 ether);
 
         // gems go to caller
         assertEq(vat.gem_balance(address(this)), 1000 ether);

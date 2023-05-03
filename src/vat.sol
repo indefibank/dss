@@ -56,11 +56,11 @@ contract Vat {
     mapping (bytes32 => Ilk)                       public ilks;
     mapping (bytes32 => mapping (address => Urn )) public urns;
     mapping (bytes32 => mapping (address => uint)) public gem;  // [wad]
-    mapping (address => uint256)                   public dai;  // [rad]
+    mapping (address => uint256)                   public stbl;  // [rad]
     mapping (address => uint256)                   public sin;  // [rad]
 
-    uint256 public debt;  // Total Dai Issued    [rad]
-    uint256 public vice;  // Total Unbacked Dai  [rad]
+    uint256 public debt;  // Total Stbl Issued    [rad]
+    uint256 public vice;  // Total Unbacked Stbl  [rad]
     uint256 public Line;  // Total Debt Ceiling  [rad]
     uint256 public live;  // Active Flag
 
@@ -128,8 +128,8 @@ contract Vat {
     }
     function move(address src, address dst, uint256 rad) external {
         require(wish(src, msg.sender), "Vat/not-allowed");
-        dai[src] = _sub(dai[src], rad);
-        dai[dst] = _add(dai[dst], rad);
+        stbl[src] = _sub(stbl[src], rad);
+        stbl[dst] = _add(stbl[dst], rad);
     }
 
     function either(bool x, bool y) internal pure returns (bool z) {
@@ -173,7 +173,7 @@ contract Vat {
         require(either(urn.art == 0, tab >= ilk.dust), "Vat/dust");
 
         gem[i][v] = _sub(gem[i][v], dink);
-        dai[w]    = _add(dai[w],    dtab);
+        stbl[w]    = _add(stbl[w],    dtab);
 
         urns[i][u] = urn;
         ilks[i]    = ilk;
@@ -223,13 +223,13 @@ contract Vat {
     function heal(uint rad) external {
         address u = msg.sender;
         sin[u] = _sub(sin[u], rad);
-        dai[u] = _sub(dai[u], rad);
+        stbl[u] = _sub(stbl[u], rad);
         vice   = _sub(vice,   rad);
         debt   = _sub(debt,   rad);
     }
     function suck(address u, address v, uint rad) external auth {
         sin[u] = _add(sin[u], rad);
-        dai[v] = _add(dai[v], rad);
+        stbl[v] = _add(stbl[v], rad);
         vice   = _add(vice,   rad);
         debt   = _add(debt,   rad);
     }
@@ -240,7 +240,7 @@ contract Vat {
         Ilk storage ilk = ilks[i];
         ilk.rate = _add(ilk.rate, rate);
         int rad  = _mul(ilk.Art, rate);
-        dai[u]   = _add(dai[u], rad);
+        stbl[u]   = _add(stbl[u], rad);
         debt     = _add(debt,   rad);
     }
 }

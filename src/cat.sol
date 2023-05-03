@@ -71,8 +71,8 @@ contract Cat {
     uint256 public live;   // Active Flag
     VatLike public vat;    // CDP Engine
     VowLike public vow;    // Debt Engine
-    uint256 public box;    // Max Dai out for liquidation        [rad]
-    uint256 public litter; // Balance of Dai out for liquidation [rad]
+    uint256 public box;    // Max Stbl out for liquidation        [rad]
+    uint256 public litter; // Balance of Stbl out for liquidation [rad]
 
     // --- Events ---
     event Bite(
@@ -163,7 +163,7 @@ contract Cat {
 
         { // Avoid stack too deep
             // This calcuation will overflow if dart*rate exceeds ~10^14,
-            // i.e. the maximum dunk is roughly 100 trillion DAI.
+            // i.e. the maximum dunk is roughly 100 trillion STBL.
             uint256 tab = mul(mul(dart, rate), milk.chop) / WAD;
             litter = add(litter, tab);
 
